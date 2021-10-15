@@ -1,0 +1,69 @@
+---
+# Source: crossplane/templates/rbac-manager-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crossplane-rbac-manager
+  labels:
+    app: crossplane-rbac-manager
+    chart: crossplane-1.4.1
+    release: crossplane
+    heritage: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crossplane-rbac-manager
+      release: crossplane
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: crossplane-rbac-manager
+        release: crossplane
+    spec:
+      serviceAccountName: rbac-manager
+      initContainers:
+      - image: crossplane/crossplane:v1.4.1
+        args:
+        - rbac
+        - init
+        imagePullPolicy: IfNotPresent
+        name: crossplane-init
+        resources:
+            limits:
+              cpu: 100m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+        securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsUser: 65532
+      containers:
+      - image: crossplane/crossplane:v1.4.1
+        args:
+        - rbac
+        - start
+        - --manage=All
+        - --provider-clusterrole=crossplane:allowed-provider-permissions
+        imagePullPolicy: IfNotPresent
+        name: crossplane
+        resources:
+            limits:
+              cpu: 100m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+        securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsUser: 65532
+        env:
+          - name: LEADER_ELECTION
+            value: "true"
