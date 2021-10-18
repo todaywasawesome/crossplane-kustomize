@@ -4,7 +4,7 @@ metadata:
   name: example-cluster
 spec:
   forProvider:
-    initialClusterVersion: "1.18"
+    initialClusterVersion: "1.20"
     location: us-west2
     masterAuth:
       # setting this master auth user name enables basic auth so that a client (e.g.,
@@ -19,7 +19,7 @@ spec:
         enabled: true
     network: "default"
   writeConnectionSecretToRef:
-    namespace: default
+    namespace: crossplane-system
     name: gke-conn
 ---
 apiVersion: container.gcp.crossplane.io/v1beta1
@@ -51,6 +51,6 @@ spec:
       - "https://www.googleapis.com/auth/servicecontrol"
       - "https://www.googleapis.com/auth/service.management.readonly"
       - "https://www.googleapis.com/auth/trace.append"      
-    initialNodeCount: 3
+    initialNodeCount: 1
     locations:
       - "us-west2-a"
