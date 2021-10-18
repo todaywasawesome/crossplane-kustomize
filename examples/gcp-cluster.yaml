@@ -19,7 +19,7 @@ spec:
         enabled: true
     network: "default"
   writeConnectionSecretToRef:
-    namespace: crossplane-system
+    namespace: default
     name: gke-conn
 ---
 apiVersion: container.gcp.crossplane.io/v1beta1
